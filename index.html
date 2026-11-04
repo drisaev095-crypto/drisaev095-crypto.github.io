@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Точка.Ру — Школа русского языка</title>
+    <link rel="icon" type="image/jpeg" href="favicon.jpg">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="header_content">
+            <div class="logo_area">
+                <img src="favicon.jpg" alt="">
+                <h1>Точка.Ру</h1>
+            </div>
+            <button class="menu_toggle" id="menu-btn" aria-label="Открыть меню" aria-expanded="false">☰</button>
+            <nav class="header_links" id="header-links">
+                <a href="#main">Главная</a>
+                <a href="#advantages">Преимущества</a>
+                <a href="#contacts">Контакты</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="wrapper" id="main">
+            <div class="intro">
+                <h1>Школа русского языка «Точка.Ру» в Грозном</h1>
+                <p>Индивидуальные занятия для учеников 5–11 классов. Повышение успеваемости, ликвидация пробелов и мощная подготовка к ОГЭ и ЕГЭ от опытного преподавателя.</p>
+                <a href="#contacts" class="play_btn">Записаться на урок</a>
+            </div>
+        </section>
+
+        <section class="wrapper" id="advantages">
+            <div class="about">
+                <h1>О нашей школе</h1>
+                <p>Мы не заставляем зубрить правила, а помогаем их понять. Занятия проходят в удобном формате, а программа подстраивается лично под каждого ученика для гарантированного результата на экзаменах.</p>
+                <div class="features_grid">
+                    <div class="feature_card"><h3>5–8 классы</h3><p>Повышение грамотности и уверенность на уроках.</p></div>
+                    <div class="feature_card"><h3>9 класс (ОГЭ)</h3><p>Разбор тестов, изложений и устного собеседования.</p></div>
+                    <div class="feature_card"><h3>10–11 классы (ЕГЭ)</h3><p>Подготовка к сочинению и тестам на высокие баллы.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="wrapper" id="contacts">
+            <div class="creators">
+                <h1>Запись на бесплатную консультацию</h1>
+                <p class="form_subtitle">Оставьте ваши данные, и преподаватель свяжется с вами</p>
+                
+                <form id="lead-form" class="orange_form" novalidate>
+                    <label for="user-name" class="visually-hidden">Ваше имя</label>
+                    <input type="text" id="user-name" name="name" placeholder="Ваше имя" required>
+                    
+                    <label for="user-phone" class="visually-hidden">Ваш телефон</label>
+                    <input type="tel" id="user-phone" name="phone" placeholder="+7 (___) ___-__-__" pattern="^\+7\s?
+
+$$
+
+-0-9\s]{7,15}$" required>
+                    
+                    <button type="submit" class="submit_btn">Получить консультацию</button>
+                </form>
+            </div>
+        </section>
+        
+        <!-- БЛОК С КАРТОЙ 2ГИС -->
+        <section class="wrapper" id="map-section">
+            <div class="map_container">
+                <h1>Как нас найти</h1>
+                <p class="map_subtitle">Мы находимся в самом центре города: г. Грозный, ул. Лорсанова, д. 5</p>
+                <div class="map_frame">
+                    <iframe id="map_875595145" frameborder="0" width="100%" height="600px" src="https://makemap.2gis.ru/widget?data=eJw1kEFzgjAQhf9LepSxAQICN4tTtKUM8dLSjgdGIo2DhIZVqwz_vQvaPe733u6-7YjShdCiiIQ6CNBStCT46ghcGkEC8ixyOGpBDNJo1QgNI-_IVlVKI3-glmfuLOQgoRoc9DXmJ4iWNNa8DWdcJdECcSHarZYNSFWjKF3OJ_RlxyEJTZot1_twwU9FeKbZB5pDSuP9uoTobWSXBf9JQpfGM370w_MqieY0S9dlET0NS1B_pTErafbIwY_i22LmxfZ8gouvq7oQvyQw6X_1BilvYS9DlHvSVMkaUL9V-BBZ5zA-gjlT1_OY5xrMntqWzRx7g35ZkACb_cYgh7xJVStvwTpS5YBo1DrMZZY_o75vMoNUA7-P801qmabreD7ep9QBr_NwKn5IVdX7txDV59gFfRT9H60Ff8A" sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation"></iframe>
+            </div>
+        </section>
+
+        <footer class="last"><p>© 2026 Школа русского языка «Точка.Ру». Все права защищены.</p></footer>
+    </main>
+
+    <!-- Модальное окно -->
+    <div class="modal_overlay" id="custom-modal">
+        <div class="modal_content">
+            <h2>Успешно!</h2>
+            <p id="modal-message"></p>
+            <button class="modal_close_btn" id="modal-close">Отлично</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
