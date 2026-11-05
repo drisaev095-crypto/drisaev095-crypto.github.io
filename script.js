@@ -41,15 +41,24 @@ if (leadForm && customModal && modalMessage && modalClose) {
         modalMessage.innerHTML = `
             Спасибо за заявку, <b>${name}</b>!<br>
             Преподаватель школы «Точка.Ру» свяжется с вами по телефону <b>${phone}</b> в ближайшее время.<br><br>
-    
+            <i>Чтобы продублировать заявку в наш WhatsApp, нажмите кнопку ниже.</i>
         `;
 
         // Убираем открытие WhatsApp при закрытии модалки
-        modalClose.onclick = function() {...} // Этот кусок закомментирован!
+        /*modalClose.onclick = function() {...}*/ // Этот кусок закомментирован!
 
-        
+        // Добавляем отдельную кнопку для WhatsApp внутри модалки
+        let waButton = document.createElement('button');
+        waButton.textContent = 'Открыть WhatsApp';
+        waButton.style.display = 'block'; // Стиль для наглядности
+        waButton.onclick = () => {
+            const cleanPhone = "79298905846"; // Номер должен быть без пробелов и плюса
+            const encodedText = encodeURIComponent(plainText);
+            window.open(`https://wa.me/${cleanPhone}?text=${encodedText}`, '_blank');
+        };
 
-        
+        modalMessage.appendChild(waButton); // Вставим её прямо в текст благодарности
+        customModal.classList.add('active');
 
         leadForm.reset();
     });
