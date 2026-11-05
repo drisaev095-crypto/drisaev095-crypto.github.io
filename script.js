@@ -7,7 +7,7 @@ const modalClose = document.getElementById('modal-close');
 if (leadForm && customModal && modalMessage && modalClose) {
     
     // Вставьте сюда ВАШУ уникальную ссылку, которую выдал Formspree
-    const formspreeUrl = "https://formspree.io";
+    const formspreeUrl = "https://formspree.io/f/mdeebbek";
 
     leadForm.addEventListener('submit', function(event) {
         event.preventDefault();
