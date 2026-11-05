@@ -1,67 +1,71 @@
-// ... [Оставляю весь ваш код до обработки формы]
+    // --- 3. ОБРАБОТКА ФОРМЫ (БЕЗОПАСНАЯ ВЕРСИЯ ЧЕРЕЗ FORMSPREE) ---
+    const leadForm = document.getElementById('lead-form');
+    const customModal = document.getElementById('custom-modal');
+    const modalMessage = document.getElementById('modal-message');
+    const modalClose = document.getElementById('modal-close');
 
-if (leadForm && customModal && modalMessage && modalClose) {
-    // ВАША ЗАЩИЩЕННАЯ ССЫЛКА FORMSPREE БЕЗ ТОКЕНОВ
-    const formspreeUrl = "https://formspree.io/f/mdeebbek";
+    if (leadForm && customModal && modalMessage && modalClose) {
+        
+        // Ваша защищенная ссылка Formspree без открытых токенов
+        const formspreeUrl = "https://formspree.io/f/mdeebbek";
 
-    leadForm.addEventListener('submit', function(event) {
-        event.preventDefault();
+        leadForm.addEventListener('submit', function(event) {
+            event.preventDefault();
 
-        const name = document.getElementById('user-name').value.trim();
-        const phone = phoneInput.value;
-        const cleanPhoneDigits = phone.replace(/\D/g, '');
+            const name = document.getElementById('user-name').value.trim();
+            const phone = phoneInput.value;
+            const cleanPhoneDigits = phone.replace(/\D/g, '');
 
-        if (cleanPhoneDigits.length < 11) {
-            alert('Пожалуйста, введите номер телефона полностью.');
-            return;
-        }
+            if (cleanPhoneDigits.length < 11) {
+                alert('Пожалуйста, введите номер телефона полностью.');
+                return;
+            }
 
-        const plainText = `Заявка со школы Точка.Ру! Имя: ${name}, Телефон: ${phone}`;
+            const plainText = `Заявка со школы Точка.Ру! Имя: ${name}, Телефон: ${phone}`;
 
-        // Отправка данных на Formspree
-        fetch(formspreeUrl, {
-            method: 'POST',
-            headers: { 
-                'Accept': 'application/json',
-                'Content-Type': 'application/json' 
-            },
-            body: JSON.stringify({ 
-                name: name, 
-                phone: phone,
-                message: plainText
+            // Отправка данных на Formspree (оттуда они автоматически улетят вам в Telegram/WhatsApp)
+            fetch(formspreeUrl, {
+                method: 'POST',
+                headers: { 
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify({ 
+                    name: name, 
+                    phone: phone,
+                    message: plainText
+                })
             })
-        })
-        .then(res => {
-            if (!res.ok) throw new Error(`Ошибка отправки: ${res.status}`);
-            return res.json();
-        })
-        .catch(err => console.error("Ошибка сети:", err));
+            .then(res => {
+                if (!res.ok) throw new Error(`Ошибка отправки: ${res.status}`);
+                return res.json();
+            })
+            .then(data => {
+                console.log("Успешно отправлено через Formspree");
+            })
+            .catch(err => console.error("Ошибка сети Formspree:", err));
 
-        // Модальное окно
-        modalMessage.innerHTML = `
-            Спасибо за заявку, <b>${name}</b>!<br>
-            Преподаватель школы «Точка.Ру» свяжется с вами по телефону <b>${phone}</b> в ближайшее время.<br><br>
-            <i>Чтобы продублировать заявку в наш WhatsApp, нажмите кнопку ниже.</i>
-        `;
+            // Изменяем текст в окне на скромный и вежливый, как вы просили
+            modalMessage.innerHTML = `
+                Спасибо за заявку, <b>${name}</b>!<br><br>
+                Ваша заявка принята.<br>
+                Пожалуйста, дождитесь ответа преподавателя.
+            `;
 
-        // Убираем открытие WhatsApp при закрытии модалки
-        /*modalClose.onclick = function() {...}*/ // Этот кусок закомментирован!
+            // Кнопка просто закрывает окно
+            modalClose.onclick = function() {
+                customModal.classList.remove('active');
+            };
 
-        // Добавляем отдельную кнопку для WhatsApp внутри модалки
-        let waButton = document.createElement('button');
-        waButton.textContent = 'Открыть WhatsApp';
-        waButton.style.display = 'block'; // Стиль для наглядности
-        waButton.onclick = () => {
-            const cleanPhone = "79298905846"; // Номер должен быть без пробелов и плюса
-            const encodedText = encodeURIComponent(plainText);
-            window.open(`https://wa.me/${cleanPhone}?text=${encodedText}`, '_blank');
-        };
+            // Открываем модальное окно на экране
+            customModal.classList.add('active');
 
-        modalMessage.appendChild(waButton); // Вставим её прямо в текст благодарности
-        customModal.classList.add('active');
+            // Очищаем поля формы
+            leadForm.reset();
+        });
 
-        leadForm.reset();
-    });
-
-    // Закрытие модалки осталось прежним
-}
+        // Закрытие модалки по клику на серый фон или клавишу Escape
+        customModal.addEventListener('click', (e) => { if (e.target === customModal) customModal.classList.remove('active'); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && customModal.classList.contains('active')) customModal.classList.remove('active'); });
+    }
+});
