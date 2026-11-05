@@ -47,8 +47,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        if (["7", "8", "9"].indexOf(inputNumbersValue) > -1) {
-            if (inputNumbersValue === "9") inputNumbersValue = "7" + inputNumbersValue;
+        if (["7", "8", "9"].indexOf(inputNumbersValue[0]) > -1) {
+            if (inputNumbersValue[0] === "9") inputNumbersValue = "7" + inputNumbersValue;
             
             let formattedValue = "+7 ";
             
@@ -78,11 +78,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // --- 3. ОБРАБОТКА ФОРМЫ (БЕЗ КНОПОК И МОДАЛОК) ---
+    // --- 3. ОБРАБОТКА ФОРМЫ (СТРОГО ЧИСТЫЙ ТЕКСТ БЕЗ КНОПОК И МОДАЛОК) ---
     const leadForm = document.getElementById('lead-form');
 
     if (leadForm) {
-        // ТВОЙ ТОЧНЫЙ АДРЕС С ТОКЕНОМ — ПРОВЕРЕН И ЗАКРЕПЛЕН НАВЕЧНО
+        // ТВОЙ НАСТОЯЩИЙ И ПРАВИЛЬНЫЙ АДРЕС:
         const formspreeUrl = "https://formspree.io/f/mdeebbek";
 
         leadForm.addEventListener('submit', function(event) {
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(err => console.error("Ошибка сети:", err));
 
-            // Вывод чистого текста Успешно прямо вместо полей формы
+            // Заменяем форму исключительно на текст об успехе. Никаких окон и кнопок.
             leadForm.innerHTML = `
                 <div style="text-align: center; padding: 30px; color: inherit;">
                     <h3 style="color: #e65c00; font-size: 24px; margin-top: 0; margin-bottom: 15px;">Успешно!</h3>
