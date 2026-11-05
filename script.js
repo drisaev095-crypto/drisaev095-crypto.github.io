@@ -47,8 +47,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        if (["7", "8", "9"].indexOf(inputNumbersValue[0]) > -1) {
-            if (inputNumbersValue[0] === "9") inputNumbersValue = "7" + inputNumbersValue;
+        if (["7", "8", "9"].indexOf(inputNumbersValue) > -1) {
+            if (inputNumbersValue === "9") inputNumbersValue = "7" + inputNumbersValue;
             
             let formattedValue = "+7 ";
             
@@ -78,11 +78,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // --- 3. ОБРАБОТКА ФОРМЫ (БЕЗ МОДАЛОК И WHATSAPP) ---
+    // --- 3. ОБРАБОТКА ФОРМЫ (БЕЗ КНОПОК И МОДАЛОК) ---
     const leadForm = document.getElementById('lead-form');
 
     if (leadForm) {
-        // ТВОЙ ТОЧНЫЙ АДРЕС FORMSPREE С ТОКЕНОМ — ТЕПЕРЬ СТОИТ НАМЕРТВО
+        // ТВОЙ ТОЧНЫЙ АДРЕС С ТОКЕНОМ — ПРОВЕРЕН И ЗАКРЕПЛЕН НАВЕЧНО
         const formspreeUrl = "https://formspree.io/f/mdeebbek";
 
         leadForm.addEventListener('submit', function(event) {
@@ -121,12 +121,12 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(err => console.error("Ошибка сети:", err));
 
-            // Сообщение выводится прямо внутри формы вместо полей ввода
+            // Вывод чистого текста Успешно прямо вместо полей формы
             leadForm.innerHTML = `
-                <div style="text-align: center; padding: 20px; color: inherit;">
-                    <h3 style="color: #e65c00; font-size: 24px; margin-bottom: 15px;">Успешно!</h3>
-                    <p style="font-size: 16px; margin-bottom: 10px;">Спасибо за заявку, <b>${name}</b>!</p>
-                    <p style="font-size: 16px;">Преподаватель школы «Точка.Ру» свяжется с вами по телефону <b>${phone}</b> в ближайшее время.</p>
+                <div style="text-align: center; padding: 30px; color: inherit;">
+                    <h3 style="color: #e65c00; font-size: 24px; margin-top: 0; margin-bottom: 15px;">Успешно!</h3>
+                    <p style="font-size: 16px; margin-bottom: 10px; line-height: 1.5;">Спасибо за заявку, <b>${name}</b>!</p>
+                    <p style="font-size: 16px; line-height: 1.5;">Преподаватель школы «Точка.Ру» свяжется с вами по телефону <b>${phone}</b> в ближайшее время.</p>
                 </div>
             `;
         });
