@@ -47,18 +47,9 @@ if (leadForm && customModal && modalMessage && modalClose) {
         // Убираем открытие WhatsApp при закрытии модалки
         modalClose.onclick = function() {...} // Этот кусок закомментирован!
 
-        // Добавляем отдельную кнопку для WhatsApp внутри модалки
-        let waButton = document.createElement('button');
-        waButton.textContent = 'Отлично';
-        waButton.style.display = 'block'; // Стиль для наглядности
-        waButton.onclick = () => {
-            const cleanPhone = "79298905846"; // Номер должен быть без пробелов и плюса
-            const encodedText = encodeURIComponent(plainText);
-            window.open(`https://wa.me/${cleanPhone}?text=${encodedText}`, '_blank');
-        };
+        
 
-        modalMessage.appendChild(waButton); // Вставим её прямо в текст благодарности
-        customModal.classList.add('active');
+        
 
         leadForm.reset();
     });
