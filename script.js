@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (leadForm && customModal && modalMessage && modalClose) {
         
         // Ваша защищенная ссылка Formspree без токенов
-        const formspreeUrl = "https://formspree.io";
+        const formspreeUrl = "https://formspree.io/f/mdeebbek";
 
         leadForm.addEventListener('submit', function(event) {
             event.preventDefault();
