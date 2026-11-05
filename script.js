@@ -78,15 +78,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // --- 3. ОБРАБОТКА ФОРМЫ ЧЕРЕЗ FORMSPREE ---
+    // --- 3. ОБРАБОТКА ФОРМЫ (БЕЗ МОДАЛОК И WHATSAPP) ---
     const leadForm = document.getElementById('lead-form');
-    const customModal = document.getElementById('custom-modal');
-    const modalMessage = document.getElementById('modal-message');
-    const modalClose = document.getElementById('modal-close');
 
-    if (leadForm && customModal && modalMessage && modalClose) {
-        
-        // ТВОЯ ТОЧНАЯ ССЫЛКА НА ФОРМСПРИ
+    if (leadForm) {
+        // ТВОЙ ТОЧНЫЙ АДРЕС FORMSPREE С ТОКЕНОМ — ТЕПЕРЬ СТОИТ НАМЕРТВО
         const formspreeUrl = "https://formspree.io/f/mdeebbek";
 
         leadForm.addEventListener('submit', function(event) {
@@ -103,6 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const plainText = `Заявка со школы Точка.Ру! Имя: ${name}, Телефон: ${phone}`;
 
+            // Отправка на Formspree
             fetch(formspreeUrl, {
                 method: 'POST',
                 headers: { 
@@ -121,24 +118,17 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(data => {
                 console.log("Успешно отправлено через Formspree");
-                leadForm.reset();
             })
             .catch(err => console.error("Ошибка сети:", err));
 
-            modalMessage.innerHTML = `Спасибо за заявку, <b>${name}</b>!<br>Преподаватель школы «Точка.Ру» свяжется с вами по телефону <b>${phone}</b> в ближайшее время.<br><br><i>Нажмите кнопку ниже, чтобы открыть чат и продублировать заявку в наш WhatsApp.</i>`;
-            customModal.classList.add('active');
-
-            modalClose.onclick = function() {
-                customModal.classList.remove('active');
-                const cleanPhone = "79298905846";
-                const encodedText = encodeURIComponent(plainText);
-                // ИСПРАВЛЕНО: Теперь строка шаблонная, слэш на месте, всё откроется
-                const waUrl = `https://wa.me{cleanPhone}?text=${encodedText}`;
-                window.open(waUrl, '_blank');
-            };
+            // Сообщение выводится прямо внутри формы вместо полей ввода
+            leadForm.innerHTML = `
+                <div style="text-align: center; padding: 20px; color: inherit;">
+                    <h3 style="color: #e65c00; font-size: 24px; margin-bottom: 15px;">Успешно!</h3>
+                    <p style="font-size: 16px; margin-bottom: 10px;">Спасибо за заявку, <b>${name}</b>!</p>
+                    <p style="font-size: 16px;">Преподаватель школы «Точка.Ру» свяжется с вами по телефону <b>${phone}</b> в ближайшее время.</p>
+                </div>
+            `;
         });
-
-        customModal.addEventListener('click', (e) => { if (e.target === customModal) customModal.classList.remove('active'); });
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && customModal.classList.contains('active')) customModal.classList.remove('active'); });
     }
 });
