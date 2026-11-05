@@ -110,3 +110,46 @@ header h1 { margin: 0; font-size: 28px; font-weight: 800; }
     width: 80px;
     height: 80px;
 }
+#main {
+    /* Вставляем выбранную вами ссылку на изображение */
+    background-image: url('https://thumbs.dreamstime.com/b/creative-education-technology-sketch-background-orange-theme-warm-toned-abstract-hand-drawn-symbols-modern-digital-tech-388256551.jpg'); 
+    
+    /* Центрируем и растягиваем фото */
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    
+    /* Важно для работы наложения фильтра */
+    position: relative; 
+}
+
+/* Создаем легкую белую дымку поверх картинки, чтобы белый текст читался на оранжевом фоне */
+#main::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* Полупрозрачный белый или слегка оранжевый фильтр */
+    background-color: rgba(235, 130, 40, 0.25); 
+    
+    /* Размываем саму картинку на фоне, чтобы скетчи (рисунки) не рябили под буквами */
+    backdrop-filter: blur(4px) brightness(0.85); 
+    -webkit-backdrop-filter: blur(4px) brightness(0.85);
+    
+    z-index: 1; 
+}
+
+/* Поднимаем блок с текстом и кнопкой над фильтром */
+#main .intro {
+    position: relative;
+    z-index: 2;
+}
+
+/* Если буквы будут слегка сливаться, добавим им аккуратную мягкую тень */
+#main .intro h1, 
+#main .intro p {
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
