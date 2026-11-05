@@ -17,9 +17,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // --- 2. МАСКА ТЕЛЕФОНА ---
+    // --- 2. ЖЕСТКАЯ РОССИЙСКАЯ МАСКА ТЕЛЕФОНА (+7) ---
     const phoneInput = document.getElementById('user-phone');
     if (phoneInput) {
+        phoneInput.addEventListener('focus', function() {
+            if (!phoneInput.value) {
+                phoneInput.value = '+7 ';
+            }
+        });
         phoneInput.addEventListener('input', onPhoneInput);
         phoneInput.addEventListener('keydown', onPhoneKeyDown);
     }
@@ -27,25 +32,53 @@ document.addEventListener('DOMContentLoaded', function() {
     function getInputNumbersValue(input) { return input.value.replace(/\D/g, ''); }
 
     function onPhoneInput(e) {
-        let input = e.target, inputNumbersValue = getInputNumbersValue(input);
-        if (!inputNumbersValue) return input.value = "";
+        let input = e.target;
+        let inputNumbersValue = getInputNumbersValue(input);
+        let selectionStart = input.selectionStart;
         
+        if (!inputNumbersValue) {
+            return input.value = "";
+        }
+
+        if (input.value.length !== selectionStart) {
+            if (e.data && /\D/.test(e.data)) {
+                input.value = input.value.replace(/\D/g, '');
+            }
+            return;
+        }
+
         if (["7", "8", "9"].indexOf(inputNumbersValue[0]) > -1) {
             if (inputNumbersValue[0] === "9") inputNumbersValue = "7" + inputNumbersValue;
-            let firstSymbols = (inputNumbersValue[0] === "8") ? "8" : "+7";
-            input.value = firstSymbols + " ";
-            if (inputNumbersValue.length > 1) input.value += '(' + inputNumbersValue.substring(1, 4);
-            if (inputNumbersValue.length >= 5) input.value += ') ' + inputNumbersValue.substring(4, 7);
-            if (inputNumbersValue.length >= 8) input.value += '-' + inputNumbersValue.substring(7, 9);
-            if (inputNumbersValue.length >= 10) input.value += '-' + inputNumbersValue.substring(9, 11);
+            
+            let formattedValue = "+7 ";
+            
+            if (inputNumbersValue.length > 1) {
+                formattedValue += "(" + inputNumbersValue.substring(1, 4);
+            }
+            if (inputNumbersValue.length >= 5) {
+                formattedValue += ") " + inputNumbersValue.substring(4, 7);
+            }
+            if (inputNumbersValue.length >= 8) {
+                formattedValue += "-" + inputNumbersValue.substring(7, 9);
+            }
+            if (inputNumbersValue.length >= 10) {
+                formattedValue += "-" + inputNumbersValue.substring(9, 11);
+            }
+            
+            input.value = formattedValue;
+        } else {
+            input.value = "+7 ";
         }
     }
 
     function onPhoneKeyDown(e) {
-        if (e.key === "Backspace" && getInputNumbersValue(e.target).length <= 1) e.target.value = "";
+        let input = e.target;
+        if (e.key === "Backspace" && getInputNumbersValue(input).length <= 1) {
+            e.preventDefault();
+        }
     }
 
-    // --- 3. ОБРАБОТКА ФОРМЫ (БЕЗОПАСНАЯ ВЕРСИЯ ЧЕРЕЗ FORMSPREE) ---
+    // --- 3. ОБРАБОТКА ФОРМЫ ЧЕРЕЗ FORMSPREE ---
     const leadForm = document.getElementById('lead-form');
     const customModal = document.getElementById('custom-modal');
     const modalMessage = document.getElementById('modal-message');
@@ -53,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (leadForm && customModal && modalMessage && modalClose) {
         
-        // Ваша защищенная ссылка Formspree без токенов
+        // ТВОЯ ТОЧНАЯ ССЫЛКА НА ФОРМСПРИ
         const formspreeUrl = "https://formspree.io/f/mdeebbek";
 
         leadForm.addEventListener('submit', function(event) {
@@ -70,7 +103,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const plainText = `Заявка со школы Точка.Ру! Имя: ${name}, Телефон: ${phone}`;
 
-            // Отправка данных на Formspree
             fetch(formspreeUrl, {
                 method: 'POST',
                 headers: { 
@@ -89,23 +121,21 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(data => {
                 console.log("Успешно отправлено через Formspree");
+                leadForm.reset();
             })
             .catch(err => console.error("Ошибка сети:", err));
 
-            // Модальное окно
             modalMessage.innerHTML = `Спасибо за заявку, <b>${name}</b>!<br>Преподаватель школы «Точка.Ру» свяжется с вами по телефону <b>${phone}</b> в ближайшее время.<br><br><i>Нажмите кнопку ниже, чтобы открыть чат и продублировать заявку в наш WhatsApp.</i>`;
             customModal.classList.add('active');
 
-            // WhatsApp
             modalClose.onclick = function() {
                 customModal.classList.remove('active');
                 const cleanPhone = "79298905846";
                 const encodedText = encodeURIComponent(plainText);
+                // ИСПРАВЛЕНО: Теперь строка шаблонная, слэш на месте, всё откроется
                 const waUrl = `https://wa.me{cleanPhone}?text=${encodedText}`;
                 window.open(waUrl, '_blank');
             };
-
-            leadForm.reset();
         });
 
         customModal.addEventListener('click', (e) => { if (e.target === customModal) customModal.classList.remove('active'); });
