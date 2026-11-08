@@ -79,49 +79,50 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- 3. ОБРАБОТКА ФОРМЫ (СТРОГО ЧИСТЫЙ ТЕКСТ БЕЗ КНОПОК И МОДАЛОК) ---
-    const leadForm = document.getElementById('lead-form');
+    // --- 3. ОБРАБОТКА ФОРМЫ (БЕЗОПАСНАЯ ОТПРАВКА НА FORMSPREE) ---
+const leadForm = document.getElementById('lead-form');
+if (leadForm) {
+    // ВАШ ТОЧНЫЙ АДРЕС ФОРМЫ:
+    const formspreeUrl = "https://formspree.io/f/mdeebbek";
 
-    if (leadForm) {
-        // ТВОЙ НАСТОЯЩИЙ И ПРАВИЛЬНЫЙ АДРЕС:
-        const formspreeUrl = "https://formspree.io/f/mdeebbek";
+    leadForm.addEventListener('submit', function(event) {
+        event.preventDefault();
 
-        leadForm.addEventListener('submit', function(event) {
-            event.preventDefault();
+        const name = document.getElementById('user-name').value.trim();
+        const phone = phoneInput.value;
+        const cleanPhoneDigits = phone.replace(/\D/g, '');
 
-            const name = document.getElementById('user-name').value.trim();
-            const phone = phoneInput.value;
-            const cleanPhoneDigits = phone.replace(/\D/g, '');
+        if (cleanPhoneDigits.length < 11) {
+            alert('Пожалуйста, введите номер телефона полностью.');
+            return;
+        }
 
-            if (cleanPhoneDigits.length < 11) {
-                alert('Пожалуйста, введите номер телефона полностью.');
-                return;
+        const plainText = `Заявка со школы Точка.Ру! Имя: ${name}, Телефон: ${phone}`;
+
+        // Отправка на Formspree
+        fetch(formspreeUrl, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                name: name, 
+                phone: phone, 
+                message: plainText 
+            })
+        })
+        .then(res => {
+            if (!res.ok) {
+                // Если сервер вернул ошибку лимитов или блокировки
+                throw new Error(`Ошибка сервера: ${res.status}`);
             }
-
-            const plainText = `Заявка со школы Точка.Ру! Имя: ${name}, Телефон: ${phone}`;
-
-            // Отправка на Formspree
-            fetch(formspreeUrl, {
-                method: 'POST',
-                headers: { 
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json' 
-                },
-                body: JSON.stringify({ 
-                    name: name, 
-                    phone: phone,
-                    message: plainText
-                })
-            })
-            .then(res => {
-                if (!res.ok) throw new Error(`Ошибка отправки: ${res.status}`);
-                return res.json();
-            })
-            .then(data => {
-                console.log("Успешно отправлено через Formspree");
-            })
-            .catch(err => console.error("Ошибка сети:", err));
-
-            // Заменяем форму исключительно на текст об успехе. Никаких окон и кнопок.
+            return res.json();
+        })
+        .then(data => {
+            console.log("Успешно отправлено через Formspree");
+            
+            // Заменяем форму на текст об успехе ТОЛЬКО после подтверждения от сервера
             leadForm.innerHTML = `
                 <div style="text-align: center; padding: 30px; color: inherit;">
                     <h3 style="color: #e65c00; font-size: 24px; margin-top: 0; margin-bottom: 15px;">Успешно!</h3>
@@ -129,6 +130,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p style="font-size: 16px; line-height: 1.5;">Преподаватель школы «Точка.Ру» свяжется с вами по телефону <b>${phone}</b> в ближайшее время.</p>
                 </div>
             `;
+        })
+        .catch(err => {
+            console.error("Критическая ошибка при отправке:", err);
+            alert("Не удалось отправить заявку из-за сбоя сети. Пожалуйста, проверьте подключение к интернету или попробуйте позже.");
         });
-    }
-});
+    });
+}
