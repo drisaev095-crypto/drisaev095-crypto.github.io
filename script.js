@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- 2. ЖЕСТКАЯ РОССИЙСКАЯ МАСКА ТЕЛЕФОНА (+7) ---
-    const phoneInput = document.getElementById('user-phone');
+    let phoneInput = document.getElementById('user-phone');
     if (phoneInput) {
         phoneInput.addEventListener('focus', function() {
             if (!phoneInput.value) {
@@ -78,62 +78,76 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // --- 3. ОБРАБОТКА ФОРМЫ (СТРОГО ЧИСТЫЙ ТЕКСТ БЕЗ КНОПОК И МОДАЛОК) ---
-    // --- 3. ОБРАБОТКА ФОРМЫ (БЕЗОПАСНАЯ ОТПРАВКА НА FORMSPREE) ---
-const leadForm = document.getElementById('lead-form');
-if (leadForm) {
-    // ВАШ ТОЧНЫЙ АДРЕС ФОРМЫ:
-    const formspreeUrl = "https://formspree.io/f/mdeebbek";
-
-    leadForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const name = document.getElementById('user-name').value.trim();
-        const phone = phoneInput.value;
-        const cleanPhoneDigits = phone.replace(/\D/g, '');
-
-        if (cleanPhoneDigits.length < 11) {
-            alert('Пожалуйста, введите номер телефона полностью.');
-            return;
+    // --- 3. ОБРАБОТКА ФОРМЫ ---
+    const leadForm = document.getElementById('lead-form');
+    if (leadForm) {
+        const formspreeUrl = "https://formspree.io/f/mdeebbek";
+        const initialFormHTML = leadForm.innerHTML;
+        function initFormSubmit() {
+            leadForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const currentNameInput = document.getElementById('user-name');
+                const currentPhoneInput = document.getElementById('user-phone');
+                const name = currentNameInput ? currentNameInput.value.trim() : '';
+                const phone = currentPhoneInput ? currentPhoneInput.value : '';
+                const cleanPhoneDigits = phone.replace(/\D/g, '');
+                if (cleanPhoneDigits.length < 11) {
+                    alert('Пожалуйста, введите номер телефона полностью.');
+                    return;
+                }
+                const plainText = `Заявка со школы Точка.Ру! Имя: ${name}, Телефон: ${phone}`;
+                fetch(formspreeUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        name: name, 
+                        phone: phone, 
+                        message: plainText 
+                    })
+                })
+                .then(res => {
+                    if (!res.ok) throw new Error(`Ошибка сервера: ${res.status}`);
+                    return res.json();
+                })
+                .then(data => {
+                    console.log("Успешно отправлено через Formspree");
+                    leadForm.innerHTML = `
+                        <div style="text-align: center; padding: 30px; color: inherit;">
+                            <h3 style="color: #e65c00; font-size: 24px; margin-top: 0; margin-bottom: 15px;">Успешно!</h3>
+                            <p style="font-size: 16px; margin-bottom: 10px; line-height: 1.5;">Спасибо за заявку, <b>${name}</b>!</p>
+                            <p style="font-size: 16px; line-height: 1.5;">Преподаватель школы «Точка.Ру» свяжется с вами по телефону <b>${phone}</b> в ближайшее время.</p>
+                        </div>
+                    `;
+                    if (window.history && window.history.replaceState) {
+                        window.history.replaceState(null, null, window.location.pathname);
+                    }
+                    setTimeout(() => {
+                        leadForm.innerHTML = initialFormHTML;
+                        const newPhoneInput = document.getElementById('user-phone');
+                        if (newPhoneInput) {
+                            newPhoneInput.addEventListener('focus', function() {
+                                if (!newPhoneInput.value) {
+                                    newPhoneInput.value = '+7 ';
+                                }
+                            });
+                            newPhoneInput.addEventListener('input', onPhoneInput);
+                            newPhoneInput.addEventListener('keydown', onPhoneKeyDown);
+                            if (typeof phoneInput !== 'undefined') {
+                                phoneInput = newPhoneInput;
+                            }
+                        }
+                        initFormSubmit();
+                    }, 5000);
+                })
+                .catch(err => {
+                    console.error("Критическая ошибка при отправке:", err);
+                    alert("Не удалось отправить заявку из-за сбоя сети. Пожалуйста, проверьте подключение к интернету или попробуйте позже.");
+                });
+            });
         }
-
-        const plainText = `Заявка со школы Точка.Ру! Имя: ${name}, Телефон: ${phone}`;
-
-        // Отправка на Formspree
-        fetch(formspreeUrl, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ 
-                name: name, 
-                phone: phone, 
-                message: plainText 
-            })
-        })
-        .then(res => {
-            if (!res.ok) {
-                // Если сервер вернул ошибку лимитов или блокировки
-                throw new Error(`Ошибка сервера: ${res.status}`);
-            }
-            return res.json();
-        })
-        .then(data => {
-            console.log("Успешно отправлено через Formspree");
-            
-            // Заменяем форму на текст об успехе ТОЛЬКО после подтверждения от сервера
-            leadForm.innerHTML = `
-                <div style="text-align: center; padding: 30px; color: inherit;">
-                    <h3 style="color: #e65c00; font-size: 24px; margin-top: 0; margin-bottom: 15px;">Успешно!</h3>
-                    <p style="font-size: 16px; margin-bottom: 10px; line-height: 1.5;">Спасибо за заявку, <b>${name}</b>!</p>
-                    <p style="font-size: 16px; line-height: 1.5;">Преподаватель школы «Точка.Ру» свяжется с вами по телефону <b>${phone}</b> в ближайшее время.</p>
-                </div>
-            `;
-        })
-        .catch(err => {
-            console.error("Критическая ошибка при отправке:", err);
-            alert("Не удалось отправить заявку из-за сбоя сети. Пожалуйста, проверьте подключение к интернету или попробуйте позже.");
-        });
-    });
-}
+        initFormSubmit();
+    }
+});
