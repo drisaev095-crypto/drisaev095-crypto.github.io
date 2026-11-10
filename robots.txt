@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://drisaev095-crypto.github.io/
